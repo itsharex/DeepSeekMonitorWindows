@@ -1,14 +1,16 @@
 # DeepSeek Monitor Windows
 
+[简体中文](README.md) | [English](README_EN.md)
+
 DeepSeek Monitor Windows 是一个面向 Windows 的 DeepSeek API 用量监控桌面应用，用于查看账户余额、当月消费、模型 Token 用量和最近用量趋势。
 
-本项目基于 [JayHome137/deepseek-monitor](https://github.com/JayHome137/DeepSeekMonitor) 的开源项目思路做 Windows 系统适配，**感谢原作者 JayHome137 的开源工作**。原项目是 Python Web Dashboard，用于追踪 DeepSeek 平台多类公开变化，原项目当前仅支持mac版本。本项目开发目标是 Windows 桌面端监控工具，技术栈和使用方式已经按 Windows 平台重构实现。
+本项目基于 [JayHome137/DeepSeekMonitor](https://github.com/JayHome137/DeepSeekMonitor) 的开源项目思路做 Windows 系统适配，**感谢原作者 JayHome137 的开源工作**。原项目是使用 Swift、SwiftUI、AppKit 和 WidgetKit 开发的 macOS 菜单栏与桌面小组件应用，用于监控 DeepSeek V4 Flash / Pro 的账户余额、Token 用量和消费情况。本项目面向 Windows 桌面端，技术栈和使用方式已经按 Windows 平台重构实现。
 
 郑重声明：本项目不是 DeepSeek 官方产品。
 
 ## About
 
-DeepSeek Monitor Windows: Windows desktop adaptation of felikschu/deepseek-monitor, built with Tauri, React and Rust for DeepSeek balance and usage monitoring.
+DeepSeek Monitor Windows is a Windows desktop adaptation inspired by JayHome137/DeepSeekMonitor. It is built with Tauri, React, TypeScript, and Rust to monitor DeepSeek balances and usage.
 
 ## 页面截图
 
@@ -49,26 +51,35 @@ DeepSeek Monitor Windows: Windows desktop adaptation of felikschu/deepseek-monit
 
 | 项目 | 原项目 deepseek-monitor | 本项目 DeepSeekMonitorWindows |
 | --- | --- | --- |
-| 目标平台 | macOS / Web Dashboard | Windows 桌面端 |
-| 核心技术 | Python, Web Server, HTML Dashboard | Tauri 2, React 18, TypeScript, Rust |
-| 主要用途 | 追踪 DeepSeek 网页端、Feature Flags、API 端点、法律文档、GitHub 等公开变化 | 查看 DeepSeek API 余额、消费、Token 用量和趋势 |
-| 启动方式 | Python 服务 + 浏览器访问 | Windows 桌面应用 |
-| 本项目是否复用原事件追踪内容 | 不复用 | 不写入 README，不作为本项目能力声明 |
+| 目标平台 | macOS 菜单栏与 WidgetKit 桌面小组件 | Windows 桌面端 |
+| 核心技术 | Swift 5.9+、SwiftUI、AppKit、WidgetKit | Tauri 2、React 18、TypeScript、Rust |
+| 主要用途 | 查看 DeepSeek 余额、消费、Token 用量和趋势 | 查看 DeepSeek API 余额、消费、Token 用量和趋势 |
+| 启动方式 | macOS 原生应用 | Windows 桌面应用 |
+| 实现方式 | 原生 macOS 实现 | 按 Windows 技术栈重新实现 |
 
-## 系统要求
+## 下载安装
+
+普通用户可从 [GitHub Releases](https://github.com/Joyi-code/DeepSeekMonitorWindows/releases/latest) 下载并运行 `DeepSeekMonitorWindows_1.1.0_x64-setup.exe`。覆盖安装新版本前无需卸载旧版本。
+
+安装包 SHA256：`B13EF28BB7E803D923E1A00BCE4A873B4EB7F2F592AFF690173C2E9291F1D13F`。
+
+运行环境要求：
 
 - Windows 10 或 Windows 11。
 - Microsoft Edge WebView2 Runtime。Windows 11 通常已内置，Windows 10 如缺失需单独安装。
+
+## 源码开发
+
+开发环境要求：
+
 - Node.js 18+ 和 npm。
 - Rust 1.77.2+，建议使用 MSVC 工具链。
 - Visual Studio Build Tools，需包含 Desktop development with C++ 相关组件。
 
-## 安装与开发
-
-Windows 源码开发需要安装 Visual Studio Build Tools 2022，并勾选 `Desktop development with C++`。项目脚本会自动探测本机 VS Build Tools 安装位置，无需手动配置固定路径。
+Windows 源码开发需要安装 Visual Studio Build Tools 2022，并勾选 `Desktop development with C++`。`npm run tauri:dev` 和 `npm run tauri:check` 会自动探测本机 VS Build Tools 安装位置，无需手动配置固定路径。执行 `npx tauri build` 时，需确保当前终端可以使用 Rust MSVC 工具链。
 
 ```powershell
-git clone <your-repo-url>
+git clone https://github.com/Joyi-code/DeepSeekMonitorWindows.git
 cd DeepSeekMonitorWindows
 npm install
 npm run tauri:dev
@@ -83,7 +94,7 @@ npm run tauri:check
 构建安装包：
 
 ```powershell
-npm run build
+npx tauri build
 ```
 
 Tauri 打包目标当前配置为 NSIS 安装包，产物位于 `src-tauri/target/release/bundle/nsis/`。
@@ -94,22 +105,22 @@ Tauri 打包目标当前配置为 NSIS 安装包，产物位于 `src-tauri/targe
 
 打开应用后进入设置页，先配置 DeepSeek API Key。API Key 用于查询账户余额，来自 DeepSeek 开放平台的 API Keys 页面。
 
-因为DeepSeek 官方未提供相应的API接口，因此用量统计需要网页登录 Token。这个 Token 与 API Key 不同，用于访问 DeepSeek 平台的用量接口。
+DeepSeek 当前未公开记录账户级用量统计的 API 接口，因此用量统计需要通过网页登录获取用量 Token。用量 Token 与 API Key 不同，用于访问 DeepSeek 平台的用量接口，应按敏感会话凭据管理。
 
 方式一，网页登录自动同步：
 
 - 点击 `方式一：网页登录自动同步`。
 - 在弹出的 DeepSeek 登录窗口完成登录。
-- 登录成功后，应用会从 WebView2 缓存中尝试提取平台用量 Token。
+- 登录成功后，应用会从 WebView2 缓存中尝试提取用量 Token。
 - 同步成功后会自动刷新本月消费和 Token 统计。
 
-方式二，手动粘贴 token：
+方式二，手动粘贴用量 Token：
 
 - 点击 `方式二：手动粘贴 token`。
 - 按页面提示从浏览器控制台获取 `JSON.parse(localStorage.userToken).value`。
 - 粘贴后保存，作为自动同步失败时的兜底方案。
 
-**Token 可能过期。用量查询失败时，重新执行网页登录同步或手动粘贴即可。**
+**用量 Token 可能过期。用量查询失败时，重新执行网页登录同步或手动粘贴即可。**
 
 ## 数据存储
 
@@ -119,7 +130,7 @@ Tauri 打包目标当前配置为 NSIS 安装包，产物位于 `src-tauri/targe
 %APPDATA%\DeepSeekMonitorWindows\config.json
 ```
 
-其中包含 API Key 和用量 Token。**请不要提交该文件，也不要把截图、日志或配置文件中的密钥内容公开。**
+其中包含未加密存储的 API Key 和用量 Token。**请不要提交、分享或备份该文件，也不要把截图、日志或配置文件中的密钥内容公开。使用共享电脑时，应在设置页清除 API Key 和用量 Token。**
 
 WebView2 登录缓存通常位于：
 
@@ -144,7 +155,8 @@ DeepSeekMonitorWindows/
 ├── public/assets/               # DeepSeek 图标与静态资源
 ├── scripts/                     # Windows 开发脚本
 ├── package.json                 # 前端依赖与脚本
-└── README.md                    # 项目说明
+├── README.md                    # 中文项目说明
+└── README_EN.md                 # 英文项目说明
 ```
 
 ## 不应提交的文件
@@ -162,7 +174,7 @@ DeepSeekMonitorWindows/
 - WebView2 缓存和本地运行配置
 - IDE 配置和系统临时文件
 
-## 依赖
+## 主要依赖
 
 前端运行依赖：
 
@@ -190,7 +202,7 @@ Rust 后端依赖：
 
 ## 更新日志
 
-完整发布记录见 GitHub Releases。
+完整发布记录见 [GitHub Releases](https://github.com/Joyi-code/DeepSeekMonitorWindows/releases)。
 
 ### v1.1.0
 

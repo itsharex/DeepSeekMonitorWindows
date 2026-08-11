@@ -9,6 +9,7 @@ src-tauri/target/
 *.md
 *.MD
 !README.md
+!README_EN.md
 
 # ---------- Internal docs ----------
 PRD.md
